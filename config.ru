@@ -4,7 +4,9 @@ require 'rubygems'
 require 'json'
 require 'sinatra'
 require 'rack'
+require 'token_auth'
 require 'rack/cors'
+
 
 use Rack::Cors do |config|
   config.allow do |allow|
@@ -15,6 +17,8 @@ use Rack::Cors do |config|
         :max_age => 0
   end
 end
+
+use Rack::TokenAuth
 
 require 'cobudget_web'
 set :root, Pathname(__FILE__).dirname

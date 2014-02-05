@@ -25,6 +25,14 @@ class CobudgetWeb < Sinatra::Base
 
   #production.run(theatre: theatre, interface: nil, interface_args: ARGV )
 
+
+  post '/authenticate' do
+    if params['email'] != 'test@test.com'
+      401
+    end
+    JWT.encode({"some" => "payload"}, "SECRET")
+  end
+
   run! if app_file == $0
 
   def build_cobudget_web theatre
