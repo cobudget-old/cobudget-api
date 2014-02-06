@@ -28,9 +28,7 @@ class CobudgetWeb < Sinatra::Base
 
   post '/authenticate' do
     password = params["password"]
-    puts CobudgetWeb.apis['cobudget'].inspect
-    puts CobudgetWeb.apis['cobudget'].methods.to_yaml
-    user = CobudgetWeb.apis['cobudget'].find_by_email_users({email: params["email"]})
+    user = CobudgetWeb.apis['cobudget'].find_by_email_users(params)
     encrypted_password = BCrypt::Engine.hash_secret(password, user.salt)
     puts "ENCRYPTED"
     if user and password == encrypted_password
