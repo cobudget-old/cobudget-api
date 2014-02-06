@@ -5,6 +5,7 @@ require 'playhouse/sinatra'
 require 'cobudget/cobudget_play'
 require 'cobudget/production'
 require 'cobudget_theatre'
+require 'bcrypt'
 
 class CobudgetWeb < Sinatra::Base
   #production = Cobudget::Production.new
@@ -25,12 +26,21 @@ class CobudgetWeb < Sinatra::Base
 
   #production.run(theatre: theatre, interface: nil, interface_args: ARGV )
 
-
   post '/authenticate' do
-    if params['email'] != 'test@test.com'
-      401
+    password = params["password"]
+    puts CobudgetWeb.apis['cobudget'].inspect
+    puts CobudgetWeb.apis['cobudget'].methods.to_yaml
+    user = CobudgetWeb.apis['cobudget'].find_by_email_users({email: params["email"]})
+    encrypted_password = BCrypt::Engine.hash_secret(password, user.salt)
+    puts "ENCRYPTED"
+    if user and password == encrypted_password
+      #get secret to config somehow
+      return false
+      JWT.encode({"id" => user.id}, "SECRET")
+    else
+      puts "Error with password or email"
+      500
     end
-    JWT.encode({"some" => "payload"}, "SECRET")
   end
 
   run! if app_file == $0

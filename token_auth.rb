@@ -10,25 +10,28 @@ module Rack
     def call(env)
       status, headers, body = @app.call(env)
       token = nil
+      #get secret to config somehow
       secret = "SECRET"
 
       if !env['HTTP_AUTHORIZATION'].blank?
         token = env['HTTP_AUTHORIZATION'].gsub('"','').gsub('Bearer ', '')
         if token
           begin
-            stuff = JWT.decode token, secret
-            puts stuff
+            token_data = JWT.decode token, secret
+            body[:user] = token_data.to_json
           rescue 
-            puts "rescue"
+            puts "DECODE ERROR"
             status = 401
           end
         else 
           puts "INVALID TOKEN"
-          status 401
+          status = 401
         end
       else
-        puts "FAIL"
-        status 401
+        #This won't allow registrations so not sure what to do here.
+        #puts "FAIL"
+        #status = 401
+        #body = "Unauthorized"
       end
 
       [status, headers, body]

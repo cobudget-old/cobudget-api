@@ -23,6 +23,7 @@ gem 'pusher'
 gem 'rack-cors', :require => 'rack/cors'
 gem 'active_model_serializers'
 gem 'shotgun'
+gem 'bcrypt-ruby'
 gem 'jwt'
 
 env :development do
