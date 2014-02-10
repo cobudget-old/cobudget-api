@@ -3,8 +3,9 @@ require 'cobudget/entities/user'
 
 module Cobudget
   module Users
-    class FindByEmail < Playhouse::Context
+    class Authenticate < Playhouse::Context
       actor :email
+      actor :password
 
       def perform
         puts actors.inspect

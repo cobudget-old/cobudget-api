@@ -128,7 +128,12 @@
     command: create_users
     params: '*name, *email, #bg_color, #fg_color'
     description: Create a user 
-
+-
+  post:
+    route: 'users/authenticate'
+    command: authenticate_users
+    params: '*password, *email'
+    description: Auth a user and return a token
 -
   post:
     route: 'users/:user_id/grant_allocation_rights/:budget_id'

@@ -6,6 +6,8 @@ module Cobudget
     has_many :allocations
     has_many :accounts
 
+    validates :email, uniqueness: true
+
     def can_manage_accounts?
       true
     end

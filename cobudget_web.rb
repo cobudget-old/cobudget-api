@@ -26,21 +26,6 @@ class CobudgetWeb < Sinatra::Base
 
   #production.run(theatre: theatre, interface: nil, interface_args: ARGV )
 
-  post '/authenticate' do
-    password = params["password"]
-    user = CobudgetWeb.apis['cobudget'].find_by_email_users(params)
-    encrypted_password = BCrypt::Engine.hash_secret(password, user.salt)
-    puts "ENCRYPTED"
-    if user and password == encrypted_password
-      #get secret to config somehow
-      return false
-      JWT.encode({"id" => user.id}, "SECRET")
-    else
-      puts "Error with password or email"
-      500
-    end
-  end
-
   run! if app_file == $0
 
   def build_cobudget_web theatre
