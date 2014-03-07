@@ -8,18 +8,12 @@ module Cobudget
     has_many :accounts
     has_many :comments
 
-    ADMIN_EMAILS = ['allansideas@gmail.com']
-
-    def name_or_email 
+    def name_or_email
       name ? name : email
     end
 
     def can_manage_accounts?
-      if ADMIN_EMAILS.include? email 
-        true
-      else
-        false
-      end
+      role == 'admin'
     end
 
     def can_manage_buckets?
