@@ -10,16 +10,12 @@ module Cobudget
 
     ADMIN_EMAILS = ['allansideas@gmail.com', 'admin@demo.cobudget']
 
-    def name_or_email 
+    def name_or_email
       name ? name : email
     end
 
     def can_manage_accounts?
-      if ADMIN_EMAILS.include? email 
-        true
-      else
-        false
-      end
+      role == 'admin'
     end
 
     def can_manage_buckets?
