@@ -9,9 +9,9 @@ module Cobudget
 
       def perform
         user = User.find_by_email(email)
-        if user
+        if !user.blank?
           user.last_sign_in_at = Time.now
-          user.save
+          user.save!
           user.as_json
         else
           User.create(actors).as_json
