@@ -21,9 +21,6 @@ module Cobudget
         balance_money = Money.new(balance)
       end
 
-      $logger.debug "Decrease Money Check: BALANCE=" + balance_money.inspect
-      $logger.debug "Decrease Money Check: AMOUNT=" + amount_money.inspect
-
       balance_money - amount_money >= 0
       #balance - amount >= 0
     end

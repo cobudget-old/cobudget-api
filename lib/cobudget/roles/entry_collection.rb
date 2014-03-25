@@ -27,7 +27,6 @@ module Cobudget
     def balance_from_user(user, budget_id)
       sum = 0
       from_user_scope(user, budget_id).each do |t|
-        $logger.debug t.entries.where("account_type = 'Cobudget::Bucket'").inspect
         sum += t.entries.where("account_type = 'Cobudget::Bucket'").first.amount_cents
       end
       sum
