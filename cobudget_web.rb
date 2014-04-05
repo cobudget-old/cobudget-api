@@ -23,7 +23,7 @@ class CobudgetWeb < Sinatra::Base
     #$logger = Logger.new("#{settings.root}/log/#{settings.environment}.log", 'monthly')
     #use Rack::CommonLogger, $logger
   #end
-  error_logger = ::File.new(::File.join(::File.dirname(::File.expand_path(__FILE__)),'..','log','error.log'),"a+")
+  error_logger = File.new("#{settings.root}/log/#{settings.environment}.log")
   before {
     env["rack.errors"] =  error_logger
   }
