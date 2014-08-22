@@ -5,11 +5,9 @@ migrate:
 run:
 	docker run --rm -i --name=cobudget-api --link=cobudget-postgres:postgres cobudget/cobudget-api
 start:
-	docker start cobudget-api
+	docker run -d --name cobudget-api --link=cobudget-postgres:postgres cobudget/cobudget-api
 stop:
-	docker stop cobudget-api
-rm:
-	docker rm cobudget-api
+	docker stop cobudget-api && docker rm cobudget-api
 logs:
 	docker logs cobudget-api
 
