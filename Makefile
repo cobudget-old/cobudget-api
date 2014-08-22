@@ -1,3 +1,18 @@
+build:
+	docker build -t cobudget/cobudget-api .
+migrate:
+	docker run --rm -i --link=cobudget-postgres:postgres cobudget/cobudget-api bundle exec rake db:migrate
+run:
+	docker run --rm -i --name=cobudget-api --link=cobudget-postgres:postgres cobudget/cobudget-api
+start:
+	docker start cobudget-api
+stop:
+	docker stop cobudget-api
+rm:
+	docker rm cobudget-api
+logs:
+	docker logs cobudget-api
+
 postgres-pull:
 	docker pull stackbrew/postgres
 postgres-run:
