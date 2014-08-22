@@ -6,14 +6,14 @@ defaults: &defaults
 
 development:
   <<: *defaults
-  host: <%= ENV['DB_PORT_5432_TCP_ADDR'] %>
+  host: <%= ENV['DB_PORT_5432_TCP_ADDR'] or 'localhost' %>
   database: cobudget_development
   username: postgres
   password:
 
 test:
   <<: *defaults
-  host: <%= ENV['DB_PORT_5432_TCP_ADDR'] %>
+  host: <%= ENV['DB_PORT_5432_TCP_ADDR'] or 'localhost' %>
   database: cobudget_test
   username: postgres
   password:
