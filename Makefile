@@ -15,6 +15,11 @@ logs:
 
 irb:
 	docker run --rm -i -t -v $(shell pwd):/app --link=cobudget-postgres:db cobudget/cobudget-api irb
+test-spec:
+	docker run --rm -i -t -v $(shell pwd):/app --link=cobudget-postgres:db cobudget/cobudget-api bundle exec rake spec
+test-features:
+	docker run --rm -i -t -v $(shell pwd):/app --link=cobudget-postgres:db cobudget/cobudget-api bundle exec rake features
+
 postgres-pull:
 	docker pull stackbrew/postgres
 postgres-run:
