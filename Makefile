@@ -1,5 +1,7 @@
 build:
 	docker build -t cobudget/cobudget-api .
+db-create:
+	docker run --rm -i -t -v $(shell pwd):/app --link=cobudget-postgres:db cobudget/cobudget-api bundle exec rake db:create
 db-migrate:
 	docker run --rm -i -t -v $(shell pwd):/app --link=cobudget-postgres:db cobudget/cobudget-api bundle exec rake db:migrate
 run:
