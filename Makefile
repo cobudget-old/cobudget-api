@@ -7,9 +7,9 @@ db-create:
 db-migrate:
 	docker run --rm -i -t -v $(shell pwd):/app --link=cobudget-postgres:db cobudget/cobudget-api bundle exec rake db:migrate
 run:
-	docker run --rm -i --name=cobudget-api --link=cobudget-postgres:postgres cobudget/cobudget-api
+	docker run --rm -i -t -P -v $(shell pwd):/app --name=cobudget-api --link=cobudget-postgres:db cobudget/cobudget-api
 start:
-	docker run -d --name cobudget-api --link=cobudget-postgres:postgres cobudget/cobudget-api
+	docker run -d -P -v $(shell pwd):/app --name cobudget-api --link=cobudget-postgres:db cobudget/cobudget-api
 stop:
 	docker stop cobudget-api && docker rm cobudget-api
 logs:
