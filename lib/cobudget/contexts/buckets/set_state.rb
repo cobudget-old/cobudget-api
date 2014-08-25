@@ -1,6 +1,7 @@
 require 'playhouse/context'
 require 'cobudget/entities/bucket'
 require 'cobudget/entities/account'
+require 'cobudget/roles/entry_collection'
 
 module Cobudget
   module Buckets
