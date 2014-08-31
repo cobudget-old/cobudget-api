@@ -26,9 +26,9 @@ gem 'shotgun'
 gem 'state_machine'
 gem 'airbrake'
 
-env :development do
-  gem 'capistrano', '2.15.5'
-end
+gem 'capistrano', '2.15.5'
+gem 'factory_girl', '4.3.0'
+gem 'faker', '1.3.0'
 
 env :test do
 end

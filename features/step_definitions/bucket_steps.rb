@@ -38,13 +38,17 @@ Then /^(#{CAPTURE_BUCKET}) should have a balance of (#{CAPTURE_MONEY})$/ do |buc
   play.bucket_balance_enquiry(bucket: bucket).should == Money.new(amount*100)
 end
 
+Then /^(#{CAPTURE_BUCKET}) should have a filled percentage of (#{CAPTURE_NUMBER})$/ do |bucket, amount|
+  play.bucket_percentage_enquiry(bucket: bucket).should == amount
+end
+
 When /^([^ ]*) allocates (#{CAPTURE_MONEY}) to (#{CAPTURE_BUCKET})$/ do |user_name, amount, bucket|
   user = users[user_name]
 
   options = {}
   options[:bucket] = bucket
   options[:amount] = amount
-  options[:admin] = user
+  options[:current_user] = user
   options[:user] = user
   play.create_allocations(options)
 end
@@ -55,7 +59,7 @@ When /^([^ ]*) tries to allocate (#{CAPTURE_MONEY}) to (#{CAPTURE_BUCKET}) but f
   options = {}
   options[:bucket] = bucket
   options[:amount] = amount
-  options[:admin] = user
+  options[:current_user] = user
   options[:user] = user
   expect{ play.create_allocations(options)}.to raise_error
 end
@@ -74,7 +78,7 @@ end
 When /^([^ ]*) removes the (#{CAPTURE_MONEY}) allocation in (#{CAPTURE_BUCKET})$/ do |user_name, amount, bucket|
   user = users[user_name]
 
-  play.remove_allocations(bucket: bucket, amount: amount, admin: user, user: user)
+  play.remove_allocations(bucket: bucket, amount: amount, current_user: user, user: user)
 end
 
 Then /^([^ ]*) should have a remaining allocation of (#{CAPTURE_MONEY}) in (#{CAPTURE_BUDGET})$/ do |user_name, amount, budget|

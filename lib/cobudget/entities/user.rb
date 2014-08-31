@@ -8,8 +8,6 @@ module Cobudget
     has_many :accounts
     has_many :comments
 
-    ADMIN_EMAILS = ['allansideas@gmail.com', 'admin@demo.cobudget']
-
     def name_or_email
       name ? name : email
     end
@@ -23,13 +21,13 @@ module Cobudget
     end
 
     def can_manage_budget?(budget)
-      true
+      self.role == 'admin'
     end
 
     def budgets
       budget_ids = accounts.map(&:budget_id)
       #accounts.each do |acc|
-        #budget_ids << acc.budget_id
+      #budget_ids << acc.budget_id
       #end
       budgets = []
       budget_ids.each do |id|
@@ -40,12 +38,12 @@ module Cobudget
 
     def as_json(options={})
       super(
-        methods: [:budgets, :name_or_email],
-        include: { 
-          accounts: {
-            methods: :allocation_rights_cents
+          methods: [:budgets, :name_or_email],
+          include: {
+              accounts: {
+                  methods: :allocation_rights_cents
+              }
           }
-        }
       )
     end
 

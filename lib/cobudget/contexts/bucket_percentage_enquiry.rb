@@ -5,11 +5,12 @@ module Cobudget
   entities :bucket
   roles :entry_collection
 
-  class BucketBalanceEnquiry < Playhouse::Context
+  class BucketPercentageEnquiry < Playhouse::Context
     actor :bucket, role: EntryCollection, repository: Bucket
 
     def perform
-      Money.new(bucket.balance)
+      return 100 if bucket.maximum.nil?
+      ((bucket.balance).to_f / bucket.maximum_cents).to_f
     end
   end
 end
