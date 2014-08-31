@@ -1,229 +1,218 @@
 #budgets
 -
-  get:
-    route: 'budgets'
-    command: list_budgets
-    params: 
-    description: Returns a list of all budgets
+  method: get
+  route: 'budgets'
+  command: Cobudget::Budgets::List
+  params:
+  description: Returns a list of all budgets
 
 -
-  get:
-    route: 'budgets/:budget_id/buckets'
-    command: list_available_buckets
-    params: '*budget_id, *state'
-    description: Returns budget buckets of defined state
+  method: get
+  route: 'budgets/:budget_id/buckets'
+  command: Cobudget::Buckets::ListAvailable
+  params: '*budget_id, *state'
+  description: Returns budget buckets of defined state
 
 -
-  get:
-    route: 'budgets/:budget_id/allocated'
-    command: budget_allocated_balance_enquiry
-    params: '*budget_id'
-    description: Returns the amount allocated to the given budget
+  method: get
+  route: 'budgets/:budget_id/allocated'
+  command: Cobudget::BudgetAllocatedBalanceEnquiry
+  params: '*budget_id'
+  description: Returns the amount allocated to the given budget
 
 -
-  get:
-    route: 'budgets/:budget_id/unallocated'
-    command: budget_allocated_balance_enquiry
-    params: '*budget_id'
-    description: Returns the unallocated amount for a given budget
+  method: get
+  route: 'budgets/:budget_id/unallocated'
+  command: Cobudget::BudgetUnallocatedBalanceEnquiry
+  params: '*budget_id'
+  description: Returns the unallocated amount for a given budget
 
 -
-  get:
-    route: 'budgets/:budget_id/total'
-    command: budget_total_enquiry
-    params: '*budget_id'
-    description: Returns the total for a given budget
--
-  get:
-    route: 'budgets/:budget_id'
-    command: show_budgets
-    params: '*budget_id'
--
-  put:
-    route: 'budgets/:budget_id'
-    command: update_buckets
-    params: '*user_id, *budget_id, name, description'
+  method: get
+  route: 'budgets/:budget_id/total'
+  command: Cobudget::BudgetTotalEnquiry
+  params: '*budget_id'
+  description: Returns the total for a given budget
 
 -
-  post:
-    route: 'budgets'
-    command: create_budgets
-    params: '*name, description'
-    description: Creates a budget
+  method: get
+  route: 'budgets/:budget_id'
+  command: Cobudget::Budgets::Show
+  params: '*budget_id'
 
 -
-  delete:
-    route: 'budgets/:budget_id/buckets/:bucket_id'
-    command: delete_buckets
-    params: '*user_id, *bucket_id, *budget_id'
-    description: Deletes a bucket from budget
+  method: put
+  route: 'budgets/:budget_id'
+  command: Cobudget::Budgets::Update
+  params: '*user_id, *budget_id, name, description'
+
+-
+  method: post
+  route: 'budgets'
+  command: Cobudget::Budgets::Create
+  params: '*name, description'
+  description: Creates a budget
 
 #buckets
 -
-  get:
-    route: 'buckets/:bucket_id'
-    command: show_buckets
-    params: '*bucket_id'
-    description: Returns a specific bucket
+  method: delete
+  route: 'budgets/:budget_id/buckets/:bucket_id'
+  command: Cobudget::Buckets::Delete
+  params: '*user_id, *bucket_id, *budget_id'
+  description: Deletes a bucket from budget
 
 -
-  get:
-    route: 'buckets/:bucket_id/balance'
-    command: bucket_balance_enquiry
-    params: '*bucket_id'
-    description: Returns the balance for a specific bucket
+  method: get
+  route: 'buckets/:bucket_id'
+  command: Cobudget::Buckets::Show
+  params: '*bucket_id'
+  description: Returns a specific bucket
 
 -
-  get:
-    route: 'buckets/:bucket_id/allocations'
-    command: list_by_bucket_allocations
-    params: '*bucket_id'
-    description: Returns a list of allocations by bucket
+  method: get
+  route: 'buckets/:bucket_id/balance'
+  command: Cobudget::BucketBalanceEnquiry
+  params: '*bucket_id'
+  description: Returns the balance for a specific bucket
 
 -
-  put:
-    route: 'buckets/:bucket_id'
-    command: update_buckets
-    params: '*user_id, *bucket_id, *budget_id, name, description, sponsor_id, minimum, maximum'
-    description: Update a bucket
+  method: put
+  route: 'buckets/:bucket_id'
+  command: Cobudget::Buckets::Update
+  params: '*user_id, *bucket_id, *budget_id, name, description, sponsor_id, minimum, maximum'
+  description: Update a bucket
 
 -
-  post:
-    route: 'buckets'
-    command: create_buckets
-    params: '*user_id, *budget_id, *name, *description, minimum, maximum, sponsor_id'
-    description: Creates a bucket
+  method: post
+  route: 'buckets'
+  command: Cobudget::Buckets::Create
+  params: '*user_id, *budget_id, *name, *description, minimum, maximum, sponsor_id'
+  description: Creates a bucket
 
 -
-  post:
-    route: 'buckets/:bucket_id/set-state'
-    command: set_state_buckets
-    params: '*bucket_id, state'
-    description: Sets the state of a bucket.
+  method: post
+  route: 'buckets/:bucket_id/set-state'
+  command: Cobudget::Buckets::SetState
+  params: '*bucket_id, state'
+  description: Sets the state of a bucket.
 
 -
-  delete:
-    route: 'buckets/:bucket_id'
-    command: delete_buckets
-    params: '*user_id, *bucket_id'
-    description: Deletes a bucket
+  method: delete
+  route: 'buckets/:bucket_id'
+  command: Cobudget::Buckets::Delete
+  params: '*user_id, *bucket_id'
+  description: Deletes a bucket
 
 #bucket comments
 -
-  get:
-    route: 'buckets/:bucket_id/comments'
-    command: list_by_bucket_comments
-    params: '*bucket_id'
-    description: gets comments for a bucket
+  method: get
+  route: 'buckets/:bucket_id/comments'
+  command: Cobudget::Comments::ListByBucket
+  params: '*bucket_id'
+  description: gets comments for a bucket
 
 -
-  post:
-    route: 'buckets/:bucket_id/comments'
-    command: create_comments
-    params: '*bucket_id, #current_user, body, comment(parent)'
-    description: creates a comment for a bucket
+  method: post
+  route: 'buckets/:bucket_id/comments'
+  command: Cobudget::Comments::Create
+  params: '*bucket_id, #current_user, body, comment(parent)'
+  description: creates a comment for a bucket
 
 -
-  delete:
-    route: 'buckets/:bucket_id/comments/:comment_id'
-    command: delete_comments
-    params: '*bucket_id, comment_id'
-    description: deletes a comment for a bucket
+  method: delete
+  route: 'buckets/:bucket_id/comments/:comment_id'
+  command: Cobudget::Comments::Delete
+  params: '*bucket_id, comment_id'
+  description: deletes a comment for a bucket
+
 #users
+#-
+#  method: get
+#  route: 'users/:user_id/budget_account/:budget_id'
+#  command: show_accounts
+#  params: '*user_id, *budget_id'
+#  description: Returns user accounts per budget
+#-
+  method: get
+  route: 'users'
+  command: Cobudget::Users::List
+  params: ''
+  description: Returns all users
 -
-  get:
-    route: 'users/:user_id/budget_account/:budget_id'
-    command: show_accounts
-    params: '*user_id, *budget_id'
-    description: Returns user accounts per budget
+  method: post
+  route: 'users/authenticate'
+  command: Cobudget::Users::Authenticate
+  params: '*email'
+  description: Creates or finds a user by email
 -
-  get:
-    route: 'users'
-    command: list_users
-    params: ''
-    description: Returns all users
+  method: get
+  route: 'users/:user_id'
+  command: Cobudget::Users::Show
+  params: '*user_id'
+  description: Returns a user
+#-
+#  method: get
+#  route: 'users/:user_id/allocatable_by_budget/:budget_id'
+#  command: get_allocation_rights
+#  params: '*user_id, *budget_id'
+#  description: Returns user allocation rights per budget
 -
-  post:
-    route: 'users/authenticate'
-    command: authenticate_users
-    params: '*email'
-    description: Creates or finds a user by email
+  method: post
+  route: 'users'
+  command: Cobudget::Users::Create
+  params: '*name, *email, #bg_color, #fg_color'
+  description: Create a user
+#-
+#  method: post
+#  route: 'users/:user_id/grant_allocation_rights/:budget_id'
+#  command: grant_allocation_rights
+#  params: '*user_id, *budget_id, *amount'
+#  description: Creates user allocatable for a budget
 -
-  get:
-    route: 'users/:user_id'
-    command: show_users
-    params: '*user_id'
-    description: Returns a user
--
-  get:
-    route: 'users/:user_id/allocatable_by_budget/:budget_id'
-    command: get_allocation_rights
-    params: '*user_id, *budget_id'
-    description: Returns user allocation rights per budget
--
-  post:
-    route: 'users'
-    command: create_users
-    params: '*name, *email, #bg_color, #fg_color'
-    description: Create a user 
-
--
-  post:
-    route: 'users/:user_id/grant_allocation_rights/:budget_id'
-    command: grant_allocation_rights
-    params: '*user_id, *budget_id, *amount'
-    description: Creates user allocatable for a budget
--
-  put:
-    route: 'users/:user_id'
-    command: update_users
-    params: '*name, *email, bg_color, fg_color'
-    description: Update a user 
--
-  patch:
-    route: 'users/:user_id'
-    command: update_users
-    params: '*name, *email, bg_color, fg_color'
-    description: Update a user 
+  method: put
+  route: 'users/:user_id'
+  command: Cobudget::Users::Update
+  params: '*name, *email, bg_color, fg_color'
+  description: Update a user
 
 
 #accounts
 -
-  get:
-    route: 'budgets/:budget_id/accounts'
-    command: list_by_budget_accounts
-    params:  '*budget_id'
-    description: Returns a list of all accounts for a budget
+  method: get
+  route: 'budgets/:budget_id/accounts'
+  command: Cobudget::Accounts::ListByBudget
+  params:  '*budget_id'
+  description: Returns a list of all accounts for a budget
 
 -
-  get:
-    route: 'accounts/:account_id'
-    command: show_accounts
-    params: '*account_id'
-    description: Get single account by id
+  method: get
+  route: 'accounts/:account_id'
+  command: Cobudget::Accounts::Show
+  params: '*account_id'
+  description: Get single account by id
 -
-  post:
-    route: 'accounts/:account_id/transfer'
-    command: transfer_funds_accounts
-    params: '*account_id(from account), to_account_id, amount_dollars'
-    description: Transfer funds from one account to another.
+  method: post
+  route: 'accounts/:account_id/transfer'
+  command: Cobudget::Accounts::TransferFunds
+  params: '*account_id(from account), to_account_id, amount_dollars'
+  description: Transfer funds from one account to another.
 -
-  post:
-    route: 'accounts'
-    command: create_accounts
-    params: '*user_id, *budget_id'
-    description: Admin creates an account for a given user and a budget 
+  method: post
+  route: 'accounts'
+  command: Cobudget::Accounts::Create
+  params: '*user_id, *budget_id'
+  description: Admin creates an account for a given user and a budget
 
 #allocations
--
-  post:
-    route: 'allocations'
-    command: create_allocations
-    params: '*user_id, *bucket_id, *amount'
-    description: Create an allocation for a bucket
--
-  patch:
-    route: 'allocations/:allocation_id'
-    command: update_allocations
-    params: '*allocation_id, *bucket_id, *budget_id, name, description, sponsor_id, minimum, maximum'
-    description: Update an allocation
+#-
+#  method: post
+#  route: 'allocations'
+#  command: create_allocations
+#  params: '*user_id, *bucket_id, *amount'
+#  description: Create an allocation for a bucket
+#-
+#  method: patch
+#  route: 'allocations/:allocation_id'
+#  command: update_allocations
+#  params: '*allocation_id, *bucket_id, *budget_id, name, description, sponsor_id, minimum, maximum'
+#  description: Update an allocation

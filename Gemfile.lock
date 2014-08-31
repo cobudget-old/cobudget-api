@@ -16,15 +16,6 @@ GIT
       thor
 
 GIT
-  remote: git://github.com/enspiral/playhouse-sinatra.git
-  revision: 031e84af2020bb95ca999e39c8837ac72c7f125a
-  specs:
-    playhouse-sinatra (0.1.0)
-      playhouse
-      sinatra
-      thin
-
-GIT
   remote: git://github.com/enspiral/playhouse.git
   revision: 7ae31044f666afa39f6dcabd775c49018215ef54
   specs:
@@ -32,6 +23,14 @@ GIT
       activerecord
       activesupport
       rake
+
+PATH
+  remote: ../playhouse-sinatra
+  specs:
+    playhouse-sinatra (0.1.0)
+      playhouse
+      sinatra
+      thin
 
 GEM
   remote: http://rubygems.org/
