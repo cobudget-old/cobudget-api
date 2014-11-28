@@ -1,0 +1,19 @@
+defaults: &defaults
+  adapter: postgresql
+  pool: 5
+  timeout: 5000
+  encoding: unicode
+
+development:
+  <<: *defaults
+  host: <%= ENV['DB_PORT_5432_TCP_ADDR'] or 'localhost' %>
+  database: cobudget_development
+  username: postgres
+  password:
+
+test:
+  <<: *defaults
+  host: <%= ENV['DB_PORT_5432_TCP_ADDR'] or 'localhost' %>
+  database: cobudget_test
+  username: postgres
+  password:
