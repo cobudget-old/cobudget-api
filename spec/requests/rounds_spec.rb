@@ -1,6 +1,23 @@
 require 'rails_helper'
 
 describe "Rounds" do
+
+  describe "GET /rounds/:id" do
+    context 'admin' do
+      xit "returns success if round is pending" do
+      end
+      xit "returns success if round is not pending" do
+      end
+    end
+
+    context 'member' do
+      xit "returns forbidden if round is pending" do
+      end
+      xit "returns success if round is not pending" do
+      end
+    end
+  end
+
   describe "POST /rounds" do
     let(:round_params) { {
       round: {
