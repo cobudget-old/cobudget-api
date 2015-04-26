@@ -1,7 +1,13 @@
 class RoundsController < ApplicationController
+
   api :GET, '/rounds/:round_id', 'Full details of round'
   def show
-    respond_with resource
+    round = Round.find(params[:id])
+    if round.group.is_admin?(current_user) || round.mode != "pending"
+      respond_with resource
+    else
+      respond_with user_not_authorized
+    end
   end
 
   api :POST, '/rounds', 'Create a round'
