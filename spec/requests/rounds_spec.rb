@@ -2,13 +2,10 @@ require 'rails_helper'
 
 describe "Rounds" do
   describe "POST /rounds" do
-    let(:time_now) { Time.new(2007,11,1,15,25,0, "+09:00") }
     let(:round_params) { {
       round: {
         group_id: group.id,
         name: "November Surplus",
-        starts_at: time_now,
-        ends_at: time_now + 3.days
       }
     }.to_json }
 
@@ -20,8 +17,6 @@ describe "Rounds" do
 
         expect(response.status).to eq created
         expect(round.name).to eq "November Surplus"
-        expect(round.starts_at).to eq time_now
-        expect(round.ends_at).to eq time_now + 3.days
       end
     end
 
