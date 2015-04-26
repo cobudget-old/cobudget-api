@@ -17,6 +17,17 @@ describe "Groups" do
     end
   end
 
+  describe "GET /groups/:organization_id" do
+    describe "if current_user is an admin of the group" do
+      xit "returns all rounds, pending + non-pending, in the response" do
+      end
+    end
+    describe "if current_user is not an admin of the group" do
+      xit "returns only non-pending rounds in the response" do
+      end
+    end
+  end
+
   describe "GET /groups?member_id=1" do
 
     before(:each) do
