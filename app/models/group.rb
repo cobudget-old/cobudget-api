@@ -9,4 +9,8 @@ class Group < ActiveRecord::Base
   def add_admin(user)
     memberships.create!(member: user, is_admin: true)
   end
+
+  def is_admin?(user)
+    memberships.find_by(member_id: user.id, is_admin: true)
+  end
 end
