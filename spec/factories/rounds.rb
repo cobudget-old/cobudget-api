@@ -1,5 +1,12 @@
 FactoryGirl.define do
+
   factory :round do
+    name { Faker::Company.name }
+    group
+    members_can_propose_buckets true
+  end
+
+  factory :pending_round, class: :round do
     name { Faker::Company.name }
     group
     members_can_propose_buckets true

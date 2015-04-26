@@ -2,7 +2,7 @@ require 'rails_helper'
 
 describe "FixedCosts" do
   let(:user) { FactoryGirl.create(:user) }
-  let(:round) { FactoryGirl.create(:round) }
+  let(:round) { FactoryGirl.create(:pending_round) }
   let(:membership) { FactoryGirl.create(:membership, group: round.group, member: user) }
   let(:admin_membership) { FactoryGirl.create(:membership,
                            group: round.group, member: user, is_admin: true) }

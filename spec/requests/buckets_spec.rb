@@ -14,7 +14,7 @@ describe "Buckets" do
     }.to_json }
 
     context 'pending round' do
-      let(:round) { FactoryGirl.create(:round, group: group) }
+      let(:round) { FactoryGirl.create(:pending_round, group: group) }
       context 'admin' do
         before { make_user_group_admin }
 
@@ -57,7 +57,7 @@ describe "Buckets" do
   describe "PUT /buckets" do
     let(:bucket) { FactoryGirl.create(:bucket, round: round, target: 1, user: user) }
     let(:new_user) { FactoryGirl.create(:user) }
-    let(:evil_round) { FactoryGirl.create(:round) }
+    let(:evil_round) { FactoryGirl.create(:pending_round) }
     let(:bucket_params) { {
       bucket: {
         name: 'Do more things',

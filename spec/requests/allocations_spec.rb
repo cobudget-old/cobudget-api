@@ -35,7 +35,7 @@ describe "Allocations" do
   end
 
   describe "PUT /allocations/:allocation_id" do
-    let(:evil_round) { FactoryGirl.create(:round) }
+    let(:evil_round) { FactoryGirl.create(:pending_round) }
     let(:allocation_params) { {
       allocation: {
         amount: "15",

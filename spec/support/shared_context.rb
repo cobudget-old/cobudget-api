@@ -5,7 +5,7 @@ module MyLetDeclarations
   let(:user) { FactoryGirl.create(:user) }
   let(:group) { FactoryGirl.create(:group) }
   let(:membership) { FactoryGirl.create(:membership, group: group) }
-  let(:round) { FactoryGirl.create(:round, group: group) }
+  let(:round) { FactoryGirl.create(:pending_round, group: group) }
   let(:fixed_cost) { FactoryGirl.create(:fixed_cost, round: round) }
   let(:allocation) { FactoryGirl.create(:allocation, round: round) }
   let(:bucket) { FactoryGirl.create(:bucket, round: round) }

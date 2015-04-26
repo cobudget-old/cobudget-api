@@ -9,19 +9,12 @@ class Round < ActiveRecord::Base
   validate :start_and_end_go_together
   validate :starts_at_before_ends_at
 
-  def open_for_proposals?
-    if starts_at.present? && ends_at.present? && (starts_at > Time.zone.now)
-      true
-    else
-      false
-    end
-  end
-
-  def closed?
-    if ends_at.present? && (ends_at < Time.zone.now)
-      true
-    else
-      false
+  def mode
+    case
+      when !starts_at.present? && !ends_at.present? then "pending"
+      when starts_at.present? && ends_at.present? && Time.zone.now < starts_at then "proposal"
+      when starts_at.present? && ends_at.present? && Time.zone.now.between?(starts_at, ends_at) then "contribution"
+      when starts_at.present? && ends_at.present? && Time.zone.now > ends_at then "closed"
     end
   end
 

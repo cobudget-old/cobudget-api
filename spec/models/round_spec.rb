@@ -19,23 +19,19 @@ RSpec.describe Round, :type => :model do
              ends_at: Time.now + 1.day) }.to raise_error
   end
 
-  context '#open_for_proposals?' do
-    it "returns true if starts_at and ends_at are defined and starts_at hasn't happened yet" do
-      expect(FactoryGirl.create(:round).open_for_proposals?).to be false
-      expect(FactoryGirl.create(:round_open_for_proposals).
-        open_for_proposals?).to be true
-      expect(FactoryGirl.create(:round_open_for_contributions).
-        open_for_proposals?).to be false
-      expect(FactoryGirl.create(:round_closed).
-        open_for_proposals?).to be false
+  context "#mode" do
+    it "upon creation, pending mode" do
+      expect(FactoryGirl.create(:pending_round).mode).to eq("pending")
+    end
+    it "if starts_at set but not reached, proposal mode" do
+      expect(FactoryGirl.create(:round_open_for_proposals).mode).to eq("proposal")
+    end
+    it "if current time in between starts_at and ends_at, contribution mode" do
+      expect(FactoryGirl.create(:round_open_for_contributions).mode).to eq("contribution")
+    end
+    it "if current time after ends_at, then closed mode" do
+      expect(FactoryGirl.create(:round_closed).mode).to eq("closed")
     end
   end
 
-  context '#closed?' do
-    it "returns true if ends_at has already happened" do
-      expect(FactoryGirl.create(:round_open_for_contributions).
-        closed?).to be false
-      expect(FactoryGirl.create(:round_closed).closed?).to be true
-    end
-  end
 end
