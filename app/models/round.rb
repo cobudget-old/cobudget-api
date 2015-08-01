@@ -10,6 +10,8 @@ class Round < ActiveRecord::Base
   validate :starts_at_before_ends_at
   validate :has_valid_duration_validator
 
+  after_save :reschedule_mailers_if_necessary
+
   def generate_new_members_and_allocations_from!(csv, admin)
     csv.each do |email, allocation_amount|
       email = email.downcase.strip
@@ -71,5 +73,18 @@ class Round < ActiveRecord::Base
           errors.add(:starts_at, "and ends_at must both be present, and starts_at must occur before ends_at.") 
         end
       end
+    end
+
+    def round_open_job
+      Delayed::Job.find_by_id(round_open_mailer_job_id)
+    end
+
+    def round_closed_job
+      Delayed::Job.find_by_id(round_closed_mailer_job_id)
+    end
+
+    def reschedule_mailers_if_necessary
+      round_open_job.update(run_at: starts_at) if (round_open_job.present? && round_open_job.run_at != starts_at)
+      round_closed_job.update(run_at: ends_at) if (round_closed_job.present? && round_closed_job.run_at != ends_at)
     end
 end
