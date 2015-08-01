@@ -66,4 +66,81 @@ RSpec.describe Round, :type => :model do
       expect(round.valid?).to eq(false)
     end
   end
+
+  xdescribe "#reschedule_mailers_if_necessary" do
+
+    before do
+      Delayed::Worker.delay_jobs = true
+    end
+
+    context "if starts_at and/or ends_at changed" do
+      it "updates round's 'round open' job to run_at the new starts_at time" do
+        class FakeJob < ActiveJob::Base
+          queue_as :default
+
+          def perform
+            puts "i am a fake job"
+          end
+        end
+
+        initial_starts_at = Time.zone.now + 1.days
+        initial_ends_at = Time.zone.now + 2.days
+        round = FactoryGirl.create(:round, starts_at: initial_starts_at, ends_at: initial_ends_at)
+
+        round_open_job = FakeJob.set(wait_until: initial_starts_at).perform_later
+        delayed_round_open_job = RoundService.delayed_job_for(round_open_job)
+
+        round_closed_job = FakeJob.set(wait_until: initial_ends_at).perform_later
+        delayed_round_closed_job = RoundService.delayed_job_for(round_closed_job)
+
+        round.update(round_open_mailer_job_id: delayed_round_open_job.id, round_closed_mailer_job_id: delayed_round_closed_job.id)
+
+        new_starts_at = initial_starts_at + 2.hours
+        new_ends_at = initial_ends_at + 2.hours
+
+        round.update(starts_at: new_starts_at, ends_at: new_ends_at)
+
+        delayed_round_open_job.reload
+        delayed_round_closed_job.reload
+
+        p "round open job rescheduled: #{delayed_round_open_job.run_at == new_starts_at}"
+        p "round closed job rescheduled: #{delayed_round_closed_job.run_at == new_ends_at}"
+        # expect(delayed_round_open_job.run_at).to eq(new_starts_at)
+        # expect(delayed_round_closed_job.run_at).to eq(new_ends_at)
+      end
+    end
+
+    context "if neither starts_at or ends_at are changed" do
+      it "jobs are not rescheduled" do
+      end
+    end
+  end
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 end
