@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20150714235506) do
+ActiveRecord::Schema.define(version: 20150801044807) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -103,6 +103,8 @@ ActiveRecord::Schema.define(version: 20150714235506) do
     t.datetime "starts_at"
     t.datetime "ends_at"
     t.boolean  "members_can_propose_buckets"
+    t.integer  "round_open_mailer_job_id"
+    t.integer  "round_closed_mailer_job_id"
   end
 
   add_index "rounds", ["group_id"], name: "index_rounds_on_group_id", using: :btree
