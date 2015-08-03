@@ -40,4 +40,40 @@ private
     authorize resource
     respond_with resource.destroy
   end
+
+  # def resource_class
+  #   resource_name.camelize.constantize
+  # end
+
+  def resource_plural
+    controller_name
+  end
+
+  def serializer_root
+    controller_name
+  end
+
+  def resource
+    instance_variable_get :"@#{resource_name}"
+  end
+
+  def resource_name
+    controller_name.singularize
+  end
+
+  def resource_serializer
+    "#{resource_name}_serializer".camelize.constantize
+  end
+
+  def respond_with_errors
+    render json: {errors: resource.errors.as_json()}, root: false, status: 422
+  end
+
+  def respond_with_resource(scope: {}, serializer: resource_serializer)
+    if resource.errors.empty?
+      render json: [resource], root: serializer_root, each_serializer: serializer
+    else
+      respond_with_errors
+    end
+  end
 end
