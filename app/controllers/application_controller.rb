@@ -71,7 +71,7 @@ private
 
   def respond_with_resource(scope: {}, serializer: resource_serializer)
     if resource.errors.empty?
-      render json: [resource], root: serializer_root, each_serializer: serializer
+        render json: [resource], root: serializer_root, each_serializer: serializer
     else
       respond_with_errors
     end
