@@ -29,4 +29,7 @@ Rails.application.routes.draw do
   
   root to: redirect('/docs')
 
+  namespace :development do
+    get 'setup_group'
+  end
 end
