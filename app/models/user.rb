@@ -7,6 +7,7 @@ class User < ActiveRecord::Base
   include TokenAuthenticable
 
   has_many :allocations
+  has_many :memberships, dependent: :destroy
 
   validates :name, presence: true
 
