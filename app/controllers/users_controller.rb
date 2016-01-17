@@ -32,6 +32,12 @@ class UsersController < AuthenticatedController
     render json: [current_user]
   end
 
+  api :POST, '/users/update_avatar'
+  def update_avatar
+    current_user.update(avatar: params.require(:file))
+    render json: [current_user]
+  end
+
   api :POST, '/users/request_password_reset?email'
   def request_password_reset
     if user = User.find_by_email(params[:email])

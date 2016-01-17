@@ -20,6 +20,7 @@ class User < ActiveRecord::Base
   has_many :buckets, dependent: :destroy
 
   has_attached_file :avatar
+  validates_attachment_file_name :avatar, :matches => [/png\Z/, /jpe?g\Z/, /gif\Z/]
 
   scope :active_in_group, -> (group) { joins(:memberships).where(memberships: {archived_at: nil, group_id: group.id}) }
 
