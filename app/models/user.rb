@@ -19,6 +19,8 @@ class User < ActiveRecord::Base
   has_many :contributions, dependent: :destroy
   has_many :buckets, dependent: :destroy
 
+  has_attached_file :avatar
+
   scope :active_in_group, -> (group) { joins(:memberships).where(memberships: {archived_at: nil, group_id: group.id}) }
 
   validates :name, presence: true
