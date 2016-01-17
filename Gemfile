@@ -37,6 +37,8 @@ gem 'airbrake'
 gem 'faker'
 gem 'factory_girl_rails'
 
+# unsorted
+gem 'paperclip'
 gem 'redcarpet'
 
 group :development do
