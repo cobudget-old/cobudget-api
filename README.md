@@ -60,3 +60,17 @@ rake jobs:work
 ```
 bundle exec rspec
 ```
+
+### Deploy
+
+*Setup heroku remote*
+
+```
+heroku git:remote -r deploy-beta -a cobudget-beta-api
+```
+
+*Push*
+
+```
+git push deploy-beta beta:master
+```
