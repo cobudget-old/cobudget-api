@@ -1,5 +1,4 @@
 Webhooks::Slack::Base = Struct.new(:event) do
-  include Routing
 
   def username
     "Cobudget Bot"
