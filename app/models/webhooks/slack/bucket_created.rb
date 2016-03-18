@@ -1,26 +1,23 @@
 class Webhooks::Slack::BucketCreated < Webhooks::Slack::Base
 
   def text
-    "#{eventable.user.name} created a new bucket: #{eventable.name}"
+    "*#{eventable.user.name}* created a new idea in *#{view_group_on_cobudget}*"
   end
 
   def attachment_fallback
-    "" #{}"*#{eventable.name}*\n#{eventable.description}\n"
+    "*#{eventable.name}*\n#{eventable.description}\n"
   end
 
   def attachment_title
-    "" #proposal_link(eventable)
+    bucket_link
   end
 
   def attachment_text
-    "" # "#{eventable.description}\n"
+    "#{eventable.description}\n#{bucket_link('Discuss it on Cobudget')}"
   end
 
   def attachment_fields
-    [{
-      title: "nothing",
-      value: "nothing"
-    }] #[motion_vote_field]
+    []
   end
 
 end

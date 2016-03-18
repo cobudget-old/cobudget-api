@@ -20,6 +20,7 @@ class ContributionsController < AuthenticatedController
   def create
     contribution = Contribution.create(contribution_params)
     if contribution.valid?
+      BucketService.bucket_received_contribution(bucket: contribution.bucket, current_user: current_user)
       ContributionService.send_bucket_received_contribution_emails(contribution: contribution)
       render json: [contribution]
     else

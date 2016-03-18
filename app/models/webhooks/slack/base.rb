@@ -16,6 +16,7 @@ Webhooks::Slack::Base = Struct.new(:event) do
   def attachments
     [{
       title:       attachment_title,
+      color:       '#00B8D4',
       text:        attachment_text,
       fields:      attachment_fields,
       fallback:    attachment_fallback
@@ -27,7 +28,15 @@ Webhooks::Slack::Base = Struct.new(:event) do
   private
 
   def view_group_on_cobudget(text = nil)
-    "<#{group_url(eventable.group)}|#{text || eventable.group.name}>"
+    "<#{url_root}groups/#{eventable.group.id}|#{text || eventable.group.name}>"
+  end
+
+  def bucket_link(text = nil)
+    "<#{url_root}buckets/#{eventable.id}|#{text || eventable.name}>"
+  end
+
+  def url_root
+    "http://localhost:9000/#/"
   end
 
   def eventable

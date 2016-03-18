@@ -1,4 +1,18 @@
 class BucketService
+  def self.bucket_created(bucket: ,current_user: )
+    Events::BucketCreated.publish!(bucket, current_user)
+  end
+
+  def self.bucket_moved_to_funding(bucket: , current_user: )
+    Events::BucketMovedToFunding.publish!(bucket, current_user)
+  end
+
+  def self.bucket_received_contribution(bucket: , current_user: )
+    if bucket.funded?
+      Events::BucketFunded.publish!(bucket, current_user)
+    end
+  end
+
   # given the current email settings, its likely that this will never be called
   def self.send_bucket_created_emails(bucket: )
     memberships = bucket.group.memberships.active.where.not(member_id: bucket.user_id)
