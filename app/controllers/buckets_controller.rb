@@ -17,6 +17,7 @@ class BucketsController < AuthenticatedController
     if bucket.save
       # BucketService.send_bucket_created_emails(bucket: bucket)
       render json: [bucket]
+      Events::BucketCreated.publish!(bucket, current_user)
     else
       render json: {
         errors: bucket.errors.full_messages
@@ -44,6 +45,7 @@ class BucketsController < AuthenticatedController
     bucket.open_for_funding(target: params[:target], funding_closes_at: params[:funding_closes_at])
     # BucketService.send_bucket_live_emails(bucket: bucket)
     render json: [bucket]
+    Events::BucketMovedToFunding.publish!(bucket, current_user)
   end
 
   private
