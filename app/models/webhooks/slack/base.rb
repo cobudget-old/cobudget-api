@@ -5,7 +5,7 @@ Webhooks::Slack::Base = Struct.new(:event) do
   end
 
   def icon_url
-    "https://pbs.twimg.com/profile_images/535182261553876992/MV2TWTgd.png"
+    ENV["SLACK_ICON_URL"]
   end
 
   def text
@@ -35,7 +35,7 @@ Webhooks::Slack::Base = Struct.new(:event) do
   end
 
   def url_root
-    "http://localhost:9000/#/"
+    ENV["ROOT_URL"] + "/#/"
   end
 
   def eventable

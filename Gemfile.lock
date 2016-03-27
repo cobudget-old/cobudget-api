@@ -212,9 +212,6 @@ GEM
       rspec-support (~> 3.3.0)
     rspec-support (3.3.0)
     ruby-graphviz (1.2.2)
-    sequenced (2.0.0)
-      activerecord (>= 3.0)
-      activesupport (>= 3.0)
     simplecov (0.10.0)
       docile (~> 1.1.0)
       json (~> 1.8)
@@ -276,7 +273,6 @@ DEPENDENCIES
   redcarpet
   responders (~> 2.0)
   rspec-rails (~> 3.0)
-  sequenced (~> 2.0.0)
   simplecov
   sinatra
   spring
