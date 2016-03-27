@@ -32,7 +32,6 @@ gem 'sinatra', :require => nil
 
 #webhooks
 gem 'httparty'
-gem 'sequenced', '~> 2.0.0'
 
 # error tracking
 gem 'airbrake'
