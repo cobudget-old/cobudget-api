@@ -41,6 +41,7 @@ gem 'newrelic_rpm'
 gem 'redcarpet'
 
 group :development do
+  gem "bullet"
   gem 'capistrano', '2.15.5'
   gem "capistrano-rails", '~> 1.0.0'
   gem "rails-erd"

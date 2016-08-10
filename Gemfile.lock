@@ -48,6 +48,9 @@ GEM
     arel (6.0.2)
     bcrypt (3.1.10)
     builder (3.2.2)
+    bullet (5.2.0)
+      activesupport (>= 3.0.0)
+      uniform_notifier (~> 1.10.0)
     byebug (4.0.5)
       columnize (= 0.9.0)
     capistrano (2.15.5)
@@ -246,6 +249,7 @@ GEM
     unf (0.1.4)
       unf_ext
     unf_ext (0.0.7.2)
+    uniform_notifier (1.10.0)
     warden (1.2.6)
       rack (>= 1.0)
 
@@ -257,6 +261,7 @@ DEPENDENCIES
   activesupport-json_encoder
   airbrake
   apipie-rails
+  bullet
   capistrano (= 2.15.5)
   capistrano-rails (~> 1.0.0)
   daemons
@@ -289,6 +294,3 @@ DEPENDENCIES
   spring
   stripe
   timecop
-
-BUNDLED WITH
-   1.11.2
