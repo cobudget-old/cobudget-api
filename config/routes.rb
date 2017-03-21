@@ -12,9 +12,9 @@ Rails.application.routes.draw do
         post :request_password_reset
         post :reset_password
         post :update_profile
-        post :invite_to_create_group
         post :update_password
         get :me
+        post :request_reconfirmation
       end
     end
 
@@ -24,7 +24,14 @@ Rails.application.routes.draw do
       end
     end
 
-    resources :groups, only: [:index, :show, :create, :update]
+
+    resources :groups, only: [:index, :show, :create, :update] do
+      member do
+        post :add_customer
+        post :add_card
+        post :extend_trial
+      end
+    end
 
     resources :comments, only: [:index, :create]
 
@@ -43,10 +50,21 @@ Rails.application.routes.draw do
     resources :buckets, only: [:index, :create, :show, :update, :destroy] do
       member do
         post :open_for_funding
+        post :archive
+        post :paid
       end
     end
 
     resources :contributions, only: [:index, :create]
+
+    resources :subscription_trackers do
+      collection do
+        post :update_email_settings
+      end
+    end
+
+    get "/analytics/report", to: "analytics#report"
+    get "/groups/:id/analytics", to: "analytics#group_report"
   end
 
   root to: redirect('/docs')

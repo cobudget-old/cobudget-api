@@ -1,8 +1,8 @@
 class BucketsController < AuthenticatedController
   api :GET, '/buckets?group_id'
   def index
-    group = Group.find(params[:group_id])
-    render json: group.buckets
+    buckets = Bucket.where(group_id: params[:group_id])
+    render json: buckets
   end
 
   api :GET, '/buckets/:id', 'Full details of bucket'
@@ -27,7 +27,7 @@ class BucketsController < AuthenticatedController
   api :PATCH, '/buckets/:id', 'Update a bucket'
   def update
     bucket = Bucket.find(params[:id])
-    render status: 403, nothing: true and return unless bucket.is_editable_by?(current_user)
+    render status: 403, nothing: true and return unless bucket.is_editable_by?(current_user) && !bucket.archived?
     bucket.update_attributes(bucket_params_update)
     if bucket.save
       render json: [bucket]
@@ -38,12 +38,31 @@ class BucketsController < AuthenticatedController
     end
   end
 
-  api :POST, '/buckets/:id?target&funding_closes_at'
+  api :POST, '/buckets/:id/open_for_funding'
   def open_for_funding
     bucket = Bucket.find(params[:id])
-    bucket.open_for_funding(target: params[:target], funding_closes_at: params[:funding_closes_at])
+    render status: 403, nothing: true and return unless bucket.is_editable_by?(current_user) && !bucket.archived?
     BucketService.bucket_moved_to_funding(bucket: bucket, current_user: current_user)
+    bucket.update(status: "live")
     render json: [bucket]
+  end
+
+  api :POST, '/buckets/:id/archive'
+  def archive
+    bucket = Bucket.find(params[:id])
+    group = bucket.group
+    render nothing: true, status: 403 and return unless (current_user.is_member_of?(group) && bucket.user == current_user) || current_user.is_admin_for?(group)
+    BucketService.archive(bucket: bucket)
+    render json: [bucket], status: 200
+  end
+
+  api :POST, '/buckets/:id/paid'
+  def paid
+    bucket = Bucket.find(params[:id])
+    group = bucket.group
+    render nothing: true, status: 403 and return unless (current_user.is_member_of?(group) && bucket.user == current_user) || current_user.is_admin_for?(group)
+    bucket.update(paid_at: Time.now.utc)
+    render json: [bucket], status: 200
   end
 
   private
@@ -52,6 +71,6 @@ class BucketsController < AuthenticatedController
     end
 
     def bucket_params_update
-      params.require(:bucket).permit(:name, :description, :target)
+      params.require(:bucket).permit(:name, :description, :target, :status)
     end
 end

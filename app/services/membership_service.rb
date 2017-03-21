@@ -5,16 +5,9 @@ class MembershipService
     member = membership.member
     group = membership.group
 
-    # destroy member's draft buckets
-    Bucket.where(group: group.id, user: member.id, status: 'draft').destroy_all
-
-    # destroy member's funding buckets, refund all their funders, and notify funders of refund via email
-    Bucket.where(user_id: member.id, status: 'live', group_id: group.id).each do |bucket|
-      funders = bucket.contributors(exclude_author: true)
-      funders.each do |funder|
-        UserMailer.notify_funder_that_bucket_was_deleted(funder: funder, bucket: bucket).deliver_now
-      end
-      bucket.destroy
+    # archives member's draft + live buckets
+    Bucket.where(group: group.id, user: member.id).where.not(status: "funded").find_each do |bucket|
+      BucketService.archive(bucket: bucket, exclude_author_from_email_notifications: true)
     end
 
     # destroy member's contributions on funding buckets
@@ -30,7 +23,7 @@ class MembershipService
   def self.generate_csv(memberships:)
     CSV.generate do |csv|
       memberships.each do |membership|
-        csv << [membership.member.email, membership.balance.to_f]
+        csv << [membership.member.email, membership.raw_balance.to_f]
       end
     end
   end
@@ -41,8 +34,9 @@ class MembershipService
       errors << "csv is empty"
     else
       errors << "too many columns" if csv.first.length > 1
+
       csv.each_with_index do |row, index|
-        email = row[0]
+        email = row[0].downcase
         errors << "malformed email address: #{email}" unless /\A[^@\s]+@([^@\s]+\.)+[^@\s]+\z/.match(email)
       end
     end
@@ -50,8 +44,8 @@ class MembershipService
   end
 
   def self.generate_csv_upload_preview(csv:, group:)
-    csv.map do |row|
-      email = row[0]
+    csv.uniq { |row| row[0] }.map do |row|
+      email = row[0].downcase
       user = User.find_by_email(email)
       {
         id: user && user.is_member_of?(group) ? user.id : "",

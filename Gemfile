@@ -4,6 +4,9 @@ gem 'rails', '~> 4.2.3'
 gem 'rails-api'
 gem 'spring', :group => :development
 
+# payments
+gem 'stripe'
+
 # persistance
 gem 'pg'
 gem 'foreigner'
@@ -17,6 +20,7 @@ gem 'responders', '~> 2.0'
 
 # model utilities
 gem 'money-rails'
+gem 'groupdate'
 
 # auth
 gem 'devise', '~> 3.5.2'
@@ -36,9 +40,7 @@ gem 'httparty'
 # error tracking
 gem 'airbrake'
 
-# using faker and factory girl to generate fake users for staging app, will put back in group :development, :test when in production
-gem 'faker'
-gem 'factory_girl_rails'
+gem 'newrelic_rpm'
 
 gem 'redcarpet'
 
@@ -55,6 +57,8 @@ group :development, :test do
   gem 'database_cleaner'
   gem 'simplecov', :require => false
   gem 'timecop'
+  gem 'faker'
+  gem 'factory_girl_rails'
 end
 
 group :production do

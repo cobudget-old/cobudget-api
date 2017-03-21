@@ -33,10 +33,17 @@ describe MembershipsController, :type => :controller do
           expect(response).to have_http_status(:success)
         end
 
-        it "returns a csv file of active memberships" do
+        it "returns a csv file of emails and raw_balances for each active membership" do
           expect(response.header["Content-Type"]).to include("text/csv")
           expect(response.header["Content-Disposition"]).to include("attachment; filename=")
-          expect(CSV.parse(response.body).length).to eq(6)
+          parsed_csv = CSV.parse(response.body)
+          expect(parsed_csv.length).to eq(6)
+          parsed_csv.each do |row|
+            email = row[0]
+            raw_balance_as_float = row[1].to_f
+            membership = User.find_by_email(email).membership_for(group)
+            expect(membership.raw_balance.to_f).to eq(raw_balance_as_float)
+          end
         end
       end
     end
@@ -122,12 +129,32 @@ describe MembershipsController, :type => :controller do
           end
         end
 
-        context "membership already exists" do
+        context "active membership already exists" do
           let!(:existing_membership) { create(:membership, group: group, is_admin: true) }
 
           it "returns http status conflict" do
             post :create, {group_id: group.id, email: existing_membership.member.email}
             expect(response).to have_http_status(:conflict)
+          end
+        end
+
+        context "archived membership already exists" do
+          let!(:existing_archived_membership) { create(:membership, group: group, archived_at: DateTime.now.utc) }
+
+          before do
+            post :create, {group_id: group.id, email: existing_archived_membership.member.email}
+          end
+
+          it "reactivates membership" do
+            expect(existing_archived_membership.reload.active?).to be_truthy
+          end
+
+          it "returns http status 'success'" do
+            expect(response).to have_http_status(:success)
+          end
+
+          it "returns reactivated membership as json" do
+            expect(parsed(response)["memberships"][0]["id"]).to eq(existing_archived_membership.id)
           end
         end
       end
@@ -196,9 +223,7 @@ describe MembershipsController, :type => :controller do
       @user_to_invite = @membership_to_invite.member
     end
 
-    after do
-      ActionMailer::Base.deliveries.clear
-    end
+    after { ActionMailer::Base.deliveries.clear }
 
     context "current_user signed in" do
       before do
@@ -208,27 +233,61 @@ describe MembershipsController, :type => :controller do
       context "current_user is admin of user's group" do
         before do
           create(:membership, member: user, group: group, is_admin: true)
-          post :invite, {id: @membership_to_invite.id}
-          @user_to_invite.reload
         end
 
-        it "returns http status 'success'" do
-          expect(response).to have_http_status(:success)
+        context "member to be invited is not yet a confirmed user of cobudget" do
+          before do
+            @user_to_invite.update(confirmed_at: nil)
+            post :invite, {id: @membership_to_invite.id}
+            @user_to_invite.reload
+          end
+
+          it "returns http status 'success'" do
+            expect(response).to have_http_status(:success)
+          end
+
+          it "creates a new confirmaton token for the user and resets confirmed_at to nil" do
+            expect(@user_to_invite.confirmation_token).to be_truthy
+            expect(@user_to_invite.confirmed_at).to be_nil
+          end
+
+          it "sends invite email with link to 'confirm-account-page' to specified user" do
+            sent_emails = ActionMailer::Base.deliveries
+            expect(sent_emails.length).to eq(1)
+            expect(sent_emails.first.to).to eq([@user_to_invite.email])
+            expect(sent_emails.first.body.to_s).to include("#/confirm_account?confirmation_token=#{@user_to_invite.confirmation_token}")
+          end
+
+          it "returns the user as json" do
+            expect(parsed(response)["users"][0]["email"]).to eq(@user_to_invite.email)
+          end
         end
 
-        it "creates a new confirmaton token for the user and resets confirmed_at to nil" do
-          expect(@user_to_invite.confirmation_token).to be_truthy
-          expect(@user_to_invite.confirmed_at).to be_nil
-        end
+        context "member to be invited is already a confirmed user of cobudget" do
+          before do
+            post :invite, {id: @membership_to_invite.id}
+            @user_to_invite.reload
+          end
 
-        it "resends invite email to specified user" do
-          sent_emails = ActionMailer::Base.deliveries
-          expect(sent_emails.length).to eq(1)
-          expect(sent_emails.first.to).to eq([@user_to_invite.email])
-        end
+          it "returns http status 'success'" do
+            expect(response).to have_http_status(:success)
+          end
 
-        it "returns the user as json" do
-          expect(parsed(response)["users"][0]["email"]).to eq(@user_to_invite.email)
+          it "does not create a new confirmation_token for the user, and does not reset confirmed_at for the user" do
+            expect(@user_to_invite.confirmation_token).to be_nil
+            expect(@user_to_invite.confirmed_at).not_to be_nil
+          end
+
+          it "sends invite email with link to 'group-page' to specified user" do
+            sent_emails = ActionMailer::Base.deliveries
+            expect(sent_emails.length).to eq(1)
+            expect(sent_emails.first.to).to eq([@user_to_invite.email])
+            expect(sent_emails.first.body.to_s).to include("#/groups/#{group.id}")
+          end
+
+          it "returns the user as json" do
+            expect(parsed(response)["users"][0]["email"]).to eq(@user_to_invite.email)
+          end
         end
       end
 
@@ -326,6 +385,7 @@ describe MembershipsController, :type => :controller do
     let(:csv_with_too_many_columns) { fixture_file_upload('bulk-invite-members-csvs/test-csv-too-many-columns.csv', 'text/csv') }
     let(:totally_fucked_csv) { fixture_file_upload('bulk-invite-members-csvs/totally-fucked-csv.csv', 'text/csv') }
     let(:empty_csv) { fixture_file_upload('bulk-invite-members-csvs/empty-csv.csv', 'text/csv') }
+    let(:duplicate_emails_csv) { fixture_file_upload('bulk-invite-members-csvs/duplicate-emails-csv.csv', 'text/csv') }
 
     context "user is group admin" do
       before do
@@ -374,6 +434,21 @@ describe MembershipsController, :type => :controller do
         it "returns http status 'unprocessable'" do
           post :upload_review, {group_id: @membership.group_id, csv: empty_csv}
           expect(response).to have_http_status(422)
+        end
+      end
+
+      context "csv contains duplicate email addresses" do
+        before do
+          post :upload_review, {group_id: @membership.group_id, csv: duplicate_emails_csv}
+        end
+
+        it "returns http status 'ok'" do
+          expect(response).to have_http_status(:ok)
+        end
+
+        it "returns review data, with unique email addresses and their summed allocation_amounts" do
+          data = parsed(response)["data"]
+          expect(data.length).to eq(3)
         end
       end
     end

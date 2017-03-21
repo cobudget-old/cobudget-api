@@ -8,23 +8,11 @@ class UsersController < AuthenticatedController
   def confirm_account
     render status: 400, nothing: true and return unless valid_confirm_account_params?
     if user = User.find_by_confirmation_token(params[:confirmation_token])
-      user.update(name: params[:name], password: params[:password], subscribed_to_daily_digest: true, subscribed_to_personal_activity: true)
+      user.update(params.permit(:name, :password))
       user.confirm!
       render json: [user]
     else
       render status: 403, nothing: true
-    end
-  end
-
-  # can remove once user can start their own group
-  api :POST, '/users/invite_to_create_group?email'
-  def invite_to_create_group
-    user = User.create_with_confirmation_token(email: params[:email])
-    if user.valid?
-      UserMailer.join_cobudget_and_create_group_invite(user: user, inviter: current_user).deliver_later
-      render status: 200, nothing: true
-    else
-      render status: 409, nothing: true
     end
   end
 
@@ -40,6 +28,13 @@ class UsersController < AuthenticatedController
     end
   end
 
+  api :POST, '/users/request_reconfirmation'
+  def request_reconfirmation
+    current_user.generate_confirmation_token! unless current_user.confirmed?
+    UserMailer.confirm_account_email(user: current_user).deliver_later
+    render nothing: true
+  end
+
   api :POST, '/users/update_profile'
   def update_profile
     current_user.update(user_params)
@@ -48,7 +43,7 @@ class UsersController < AuthenticatedController
 
   api :POST, '/users/request_password_reset?email'
   def request_password_reset
-    if user = User.find_by_email(params[:email])
+    if user = User.find_by_email(params[:email].downcase)
       user.generate_reset_password_token! if user.confirmed?
       UserMailer.reset_password_email(user: user).deliver_later
       render nothing: true, status: 200
@@ -96,9 +91,6 @@ class UsersController < AuthenticatedController
         :name,
         :email,
         :utc_offset,
-        :subscribed_to_personal_activity,
-        :subscribed_to_daily_digest,
-        :subscribed_to_participant_activity,
         :confirmation_token
       )
     end

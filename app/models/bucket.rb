@@ -25,14 +25,8 @@ class Bucket < ActiveRecord::Base
     Money.new(target * 100, currency_code).format
   end
 
-  # funding_closes_at, need to think more about the implications of setting this
-  def open_for_funding(target:, funding_closes_at:)
-    update(target: target, status: "live", funding_closes_at: funding_closes_at, live_at: Time.now.utc)
-  end
-
-  # TODO: eventually bring this stuff onto the client side
   def num_of_contributors
-    contributions.map { |c| c.user_id }.uniq.length
+    Contribution.where(bucket_id: id).group(:user_id).count.length
   end
 
   def funded?
@@ -41,6 +35,14 @@ class Bucket < ActiveRecord::Base
 
   def formatted_percent_funded
     "#{(total_contributions.to_f / target * 100).round}%"
+  end
+
+  def formatted_amount_left
+    Money.new(amount_left * 100, currency_code).format
+  end
+
+  def amount_left
+    target - total_contributions
   end
 
   def num_of_comments
@@ -82,11 +84,17 @@ class Bucket < ActiveRecord::Base
     member.is_admin_for?(group) || user == member
   end
 
+  def archived?
+    archived_at.present?
+  end
+
   private
     def set_timestamp_if_status_updated
-      case self.status
-        when "live" then self.live_at = Time.now.utc
-        when "funded" then self.funded_at = Time.now.utc
+      if status_changed?
+        case self.status
+          when "live" then self.live_at = Time.now.utc
+          when "funded" then self.funded_at = Time.now.utc
+        end
       end
     end
 
