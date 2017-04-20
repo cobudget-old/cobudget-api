@@ -3,6 +3,7 @@
   has_many :allocations, dependent: :destroy
   has_many :memberships
   has_many :members, through: :memberships, source: :member
+  has_many :webhooks, as: :hookable
 
   validates_presence_of :name
 

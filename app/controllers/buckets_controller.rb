@@ -15,6 +15,7 @@ class BucketsController < AuthenticatedController
   def create
     bucket = Bucket.new(bucket_params_create)
     if bucket.save
+      BucketService.bucket_created(bucket: bucket, current_user: current_user)
       render json: [bucket]
     else
       render json: {
@@ -41,6 +42,7 @@ class BucketsController < AuthenticatedController
   def open_for_funding
     bucket = Bucket.find(params[:id])
     render status: 403, nothing: true and return unless bucket.is_editable_by?(current_user) && !bucket.archived?
+    BucketService.bucket_moved_to_funding(bucket: bucket, current_user: current_user)
     bucket.update(status: "live")
     render json: [bucket]
   end

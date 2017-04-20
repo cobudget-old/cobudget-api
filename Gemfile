@@ -34,6 +34,9 @@ gem 'delayed_job_active_record'
 gem 'daemons'
 gem 'sinatra', :require => nil
 
+#webhooks
+gem 'httparty'
+
 # error tracking
 gem 'airbrake'
 
