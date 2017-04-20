@@ -23,9 +23,9 @@ gem 'money-rails'
 gem 'groupdate'
 
 # auth
-gem 'devise', '3.5.6'
+gem 'devise'
 gem 'pundit'
-gem 'devise_token_auth',  '0.1.37'
+gem 'devise_token_auth'
 gem 'omniauth'
 
 # server
