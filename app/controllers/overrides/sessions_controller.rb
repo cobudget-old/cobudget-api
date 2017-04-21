@@ -1,6 +1,12 @@
 module Overrides
   class SessionsController < DeviseTokenAuth::SessionsController
+    
+    ## The create method is an exact copy of the create method from release 0.1.40 of
+    ## https://github.com/lynndylanhurley/devise_token_auth/app/controllers/devise_token_auth/sessions_controller.rb
+    ## 
+    ## All changes will be explicitly marked below
     def create
+      # Check
       field = (resource_params.keys.map(&:to_sym) & resource_class.authentication_keys).first
 
       @resource = nil
@@ -20,7 +26,12 @@ module Overrides
         @resource = resource_class.where(q, q_value).first
       end
 
-      if @resource and valid_params?(field, q_value) and @resource.valid_password?(resource_params[:password]) and (!@resource.respond_to?(:active_for_authentication?) or @resource.active_for_authentication?)
+      if @resource && valid_params?(field, q_value) && (!@resource.respond_to?(:active_for_authentication?) || @resource.active_for_authentication?)
+        valid_password = @resource.valid_password?(resource_params[:password])
+        if (@resource.respond_to?(:valid_for_authentication?) && !@resource.valid_for_authentication? { valid_password }) || !valid_password
+          render_create_error_bad_credentials
+          return
+        end
         # create client id
         @client_id = SecureRandom.urlsafe_base64(nil, false)
         @token     = SecureRandom.urlsafe_base64(nil, false)
@@ -33,23 +44,16 @@ module Overrides
 
         sign_in(:user, @resource, store: false, bypass: false)
 
-        yield if block_given?
+        yield @resource if block_given?
 
         render_create_success
-      elsif @resource && !@resource.confirmed?
+      elsif @resource && !(!@resource.respond_to?(:active_for_authentication?) || @resource.active_for_authentication?)
+        ## UserMailer call added
         UserMailer.confirm_account_email(user: @resource).deliver_later
         render_create_error_not_confirmed
       else
         render_create_error_bad_credentials
       end
     end
-
-    private
-      def render_create_error_not_confirmed
-        render json: {
-          success: false,
-          errors: [ "You have not yet confirmed your email address. We've sent another email to #{@resource.email}. Please check your inbox to continue."]
-        }, status: 401
-      end
   end
 end
