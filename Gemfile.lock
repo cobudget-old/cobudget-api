@@ -265,6 +265,7 @@ DEPENDENCIES
   puma
   pundit
   rack-cors
+  rack-test
   rails
   rails-api
   rails-erd

@@ -53,6 +53,7 @@ group :development, :test do
   gem 'timecop'
   gem 'faker'
   gem 'factory_girl_rails'
+  gem 'rack-test', require: 'rack/test'
 end
 
 group :production do
