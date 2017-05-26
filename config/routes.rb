@@ -38,6 +38,7 @@ Rails.application.routes.draw do
     resources :memberships, only: [:index, :create, :show, :update] do
       collection do
         get :my_memberships
+        get :report
         post :upload_review
       end
 

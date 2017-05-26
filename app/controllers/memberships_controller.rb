@@ -1,8 +1,24 @@
 require 'csv'
 
 class MembershipsController < AuthenticatedController
-  before_action :validate_user_is_group_admin!, only: [:create, :invite, :archive]
+  before_action :validate_user_is_group_admin!, only: [:create, :invite, :archive, :report]
   before_action :validate_user_is_group_member!, only: [:index, :show]
+
+  api :GET, '/memberships/report?group_id', 'Get detailed members report for a particular group'
+  def report
+    respond_to do |format|
+      memberships = group.memberships.active
+      format.json do
+        render json: memberships
+      end
+
+      format.csv do
+        csv = MembershipService.generate_report_csv(memberships: memberships)
+        filename = "#{group.name}-member-report-#{Time.now.utc.iso8601}"
+        send_data csv, type: "text/csv; charset=utf-8", disposition: 'attachment', filename: filename
+      end
+    end
+  end
 
   api :GET, 'memberships?group_id', 'Get memberships for a particular group'
   def index
