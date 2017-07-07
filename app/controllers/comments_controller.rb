@@ -3,6 +3,7 @@ class CommentsController < AuthenticatedController
 
   api :GET, '/comments?bucket_id='
   def index
+    boop = params[:boop]
     bucket = Bucket.find(params[:bucket_id])
     render json: bucket.comments
   end
