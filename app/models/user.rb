@@ -40,6 +40,9 @@ class User < ActiveRecord::Base
   end
 
   def is_member_of?(group)
+    if is_super_admin
+        return true
+    end
     Membership.where(group: group, member: self, archived_at: nil).length > 0
   end
 
