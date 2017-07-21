@@ -4,6 +4,7 @@ class MembershipSerializer < ActiveModel::Serializer
              :is_admin,
              :created_at,
              :balance,
+             :saved_funds_at,
              :archived_at,
              :raw_balance,
              :closed_admin_help_card_at,
