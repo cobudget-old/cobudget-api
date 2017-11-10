@@ -12,9 +12,10 @@ namespace :greaterthan do
       if membership_count == 1
         User.find(m.member_id).subscription_tracker.delete
         User.find(m.member_id).delete
-        Membership.where({group_id: 30}).delete_all
       end
     end
+
+    Membership.where({group_id: 30}).delete_all
 
     Bucket.where({group_id: 30}).each do |b|
       Contribution.where({bucket_id: b.id}).delete_all
@@ -36,9 +37,10 @@ namespace :greaterthan do
       if membership_count == 1
         User.find(m.member_id).subscription_tracker.delete
         User.find(m.member_id).delete
-        Membership.where({group_id: 31}).delete_all
       end
     end
+
+    Membership.where({group_id: 31}).delete_all
 
     Bucket.where({group_id: 31}).each do |b|
       Contribution.where({bucket_id: b.id}).delete_all
@@ -60,9 +62,10 @@ namespace :greaterthan do
       if membership_count == 1
         User.find(m.member_id).subscription_tracker.delete
         User.find(m.member_id).delete
-        Membership.where({group_id: 36}).delete_all
       end
     end
+    
+    Membership.where({group_id: 36}).delete_all
 
     Bucket.where({group_id: 36}).each do |b|
       Contribution.where({bucket_id: b.id}).delete_all
